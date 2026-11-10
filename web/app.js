@@ -3,9 +3,50 @@ const $=id=>document.getElementById(id);
 const weekdays=["SEG","TER","QUA","QUI","SEX","SAB","DOM"];
 const shifts=["Manhã","Tarde","Noite","Suporte"];
 const compartments=shifts.flatMap((shift,r)=>weekdays.map((day,c)=>({id:r*7+c+1,label:day+" – "+shift,day,shift,row:r+1,col:c+1,boxId:1,capacity:40})));
-let db=load(),page="dashboard",selectedComp=4,selectedPosition=1,searchTerm="";
+let db=load(),page="dashboard",selectedComp=4,selectedPosition=1,searchTerm="",authenticated=false,cloudReady=false;
+
 function load(){try{return JSON.parse(localStorage.getItem(KEY))||{chips:[],moves:[],boxes:[{id:1,name:"Caixa 01"}]}}catch{return{chips:[],moves:[],boxes:[{id:1,name:"Caixa 01"}]}}}
-function save(){localStorage.setItem(KEY,JSON.stringify(db))}
+function save(){
+  localStorage.setItem(KEY,JSON.stringify(db));
+  if(authenticated && cloudReady){
+    fetch("/api/state",{method:"PUT",headers:{"Content-Type":"application/json"},credentials:"same-origin",body:JSON.stringify(db)})
+      .then(r=>{if(!r.ok)throw new Error("Não foi possível sincronizar");return r.json()})
+      .then(()=>setCloudStatus("Sincronizado com o banco de dados"))
+      .catch(()=>{setCloudStatus("Falha na sincronização — verifique sua conexão");showToast("Não foi possível salvar no banco. Seus dados locais foram preservados.")});
+  }
+}
+function setCloudStatus(message){
+  const el=document.querySelector(".local-status");
+  if(el){el.querySelector("b").textContent=message;el.querySelector("small").textContent="Armazenamento central seguro";}
+}
+async function initializeCloud(){
+  try{
+    const session=await fetch("/api/session",{credentials:"same-origin"}).then(r=>r.json());
+    if(!session.authenticated){$("authBackdrop").hidden=false;return}
+    authenticated=true;
+    const result=await fetch("/api/state",{credentials:"same-origin"}).then(async r=>{if(!r.ok)throw new Error("Banco indisponível");return r.json()});
+    if(result.state){db=result.state;localStorage.setItem(KEY,JSON.stringify(db))}
+    else{
+      // Migra automaticamente os dados que já estavam neste navegador.
+      await fetch("/api/state",{method:"PUT",headers:{"Content-Type":"application/json"},credentials:"same-origin",body:JSON.stringify(db)}).then(r=>{if(!r.ok)throw new Error("Falha na migração")});
+    }
+    cloudReady=true;setCloudStatus("Banco de dados conectado");render();
+  }catch(error){setCloudStatus("Banco de dados indisponível");showToast(error.message||"Falha ao conectar")}
+}
+$("loginForm").addEventListener("submit",async e=>{
+  e.preventDefault();$("loginError").textContent="";
+  try{
+    const response=await fetch("/api/session",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",body:JSON.stringify({password:$("loginPassword").value})});
+    const data=await response.json();
+    if(!response.ok)throw new Error(data.error||"Não foi possível entrar");
+    authenticated=true;
+    const result=await fetch("/api/state",{credentials:"same-origin"}).then(r=>r.json());
+    if(result.state){db=result.state;localStorage.setItem(KEY,JSON.stringify(db))}
+    else await fetch("/api/state",{method:"PUT",headers:{"Content-Type":"application/json"},credentials:"same-origin",body:JSON.stringify(db)});
+    cloudReady=true;$("authBackdrop").hidden=true;$("loginPassword").value="";
+    setCloudStatus("Banco de dados conectado");render();showToast("Acesso autorizado.");
+  }catch(error){$("loginError").textContent=error.message}
+});
 function esc(s=""){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 function fmtPhone(v=""){let n=v.replace(/\D/g,"");if(n.length===11)return n.replace(/^(\d{2})(\d{5})(\d{4})$/,"($1) $2-$3");if(n.length===10)return n.replace(/^(\d{2})(\d{4})(\d{4})$/,"($1) $2-$3");return v}
 function compName(id){return compartments.find(c=>c.id===Number(id))?.label||"—"}
