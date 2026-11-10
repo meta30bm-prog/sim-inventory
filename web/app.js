@@ -99,3 +99,4 @@ $("menuBtn").addEventListener("click",()=>$("sidebar").classList.toggle("open"))
 $("compSelect").addEventListener("change",()=>{if($("compSelect").value)$("stock").value="utilizado"});
 $("today").textContent=new Date().toLocaleDateString("pt-BR",{weekday:"short",day:"2-digit",month:"short",year:"numeric"});
 render();
+initializeCloud();
