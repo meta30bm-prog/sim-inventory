@@ -25,9 +25,9 @@ O primeiro acesso solicita a senha administrativa. A tabela `sim_inventory_state
 
 ## Migração dos dados locais
 
-Depois que o projeto estiver publicado no Vercel e o banco estiver conectado, abra o novo endereço no mesmo navegador em que os chips já estão cadastrados e entre com a senha administrativa. Se o banco estiver vazio, o aplicativo envia automaticamente os dados locais desse navegador para o PostgreSQL. Se você já tiver um backup JSON, restaure-o depois de entrar.
+Antes de trocar o endereço, abra o portal antigo do GitHub Pages e use **Relatórios → Backup JSON** para baixar uma cópia dos chips. Depois que o projeto estiver publicado no Vercel e o banco estiver conectado, entre com a senha administrativa e use **Relatórios → Importar backup JSON** para carregar esse arquivo no banco central.
 
-**Importante:** a migração automática só consegue copiar os dados do navegador em que o inventário antigo foi usado. Faça também um backup JSON antes da mudança.
+**Importante:** o armazenamento do navegador é separado por endereço do site. Por isso, os dados guardados no endereço antigo do GitHub Pages não aparecem automaticamente no novo endereço do Vercel. A importação do backup JSON é o caminho correto para levar os registros existentes.
 
 ## Funcionalidades
 
