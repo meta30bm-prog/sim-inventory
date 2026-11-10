@@ -31,6 +31,7 @@ async function initializeCloud(){
       await fetch("/api/state",{method:"PUT",headers:{"Content-Type":"application/json"},credentials:"same-origin",body:JSON.stringify(db)}).then(r=>{if(!r.ok)throw new Error("Falha na migração")});
     }
     cloudReady=true;setCloudStatus("Banco de dados conectado");render();
+initializeCloud();
   }catch(error){setCloudStatus("Banco de dados indisponível");showToast(error.message||"Falha ao conectar")}
 }
 $("loginForm").addEventListener("submit",async e=>{
@@ -40,9 +41,14 @@ $("loginForm").addEventListener("submit",async e=>{
     const data=await response.json();
     if(!response.ok)throw new Error(data.error||"Não foi possível entrar");
     authenticated=true;
-    const result=await fetch("/api/state",{credentials:"same-origin"}).then(r=>r.json());
+    const stateResponse=await fetch("/api/state",{credentials:"same-origin"});
+    if(!stateResponse.ok)throw new Error("Não foi possível acessar o banco de dados.");
+    const result=await stateResponse.json();
     if(result.state){db=result.state;localStorage.setItem(KEY,JSON.stringify(db))}
-    else await fetch("/api/state",{method:"PUT",headers:{"Content-Type":"application/json"},credentials:"same-origin",body:JSON.stringify(db)});
+    else{
+      const migration=await fetch("/api/state",{method:"PUT",headers:{"Content-Type":"application/json"},credentials:"same-origin",body:JSON.stringify(db)});
+      if(!migration.ok)throw new Error("Não foi possível inicializar o banco de dados.");
+    }
     cloudReady=true;$("authBackdrop").hidden=true;$("loginPassword").value="";
     setCloudStatus("Banco de dados conectado");render();showToast("Acesso autorizado.");
   }catch(error){$("loginError").textContent=error.message}
