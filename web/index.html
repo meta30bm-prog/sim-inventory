@@ -13,6 +13,7 @@
   <div class="nav-label">GERENCIAMENTO</div>
   <nav id="nav">
     <button class="nav-item active" data-page="dashboard"><span>▦</span> Visão geral</button>
+    <button class="nav-item" data-page="inventory"><span>▣</span> Estoque / matéria-prima</button>
     <button class="nav-item" data-page="chips"><span>▤</span> Todos os chips</button>
     <button class="nav-item" data-page="boxes"><span>▦</span> Caixas e posições</button>
     <button class="nav-item" data-page="search"><span>⌕</span> Localizar chip</button>
@@ -32,7 +33,7 @@
 <label>Operadora<select id="operator"><option value="">Selecionar</option><option>Vivo</option><option>Claro</option><option>TIM</option><option>Algar</option><option>Outra</option></select></label>
 <label>Responsável<input id="owner" placeholder="Nome do responsável"></label>
 <label>ICCID (opcional)<input id="iccid" placeholder="Identificador do SIM"></label>
-<label>Estoque<select id="stock"><option value="nao_ativado">Chips não ativados</option><option value="ativado">Chips ativados</option><option value="utilizado">Chips utilizados</option></select></label>
+<input type="hidden" id="stock" value="utilizado">
 <label>Situação<select id="status"><option value="disponivel">Disponível</option><option value="em_uso">Em uso</option><option value="bloqueado">Bloqueado</option><option value="retirado">Retirado</option></select></label>
 <label>Caixa<select id="boxSelect"><option value="">Sem caixa</option></select></label>
 <label>Compartimento<select id="compSelect"><option value="">Sem compartimento</option></select></label>
