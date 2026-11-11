@@ -3,6 +3,20 @@ const $=id=>document.getElementById(id);
 const weekdays=["SEG","TER","QUA","QUI","SEX","SAB","DOM"];
 const shifts=["Manhã","Tarde","Noite","Suporte"];
 let db=load(),page="dashboard",selectedComp=4,selectedPosition=1,searchTerm="",cloudReady=false;
+const THEME_KEY="sim-inventory-theme-v1";
+function applyTheme(theme){
+  const dark=theme==="dark";
+  document.body.classList.toggle("dark-theme",dark);
+  const btn=document.getElementById("themeToggle");
+  if(btn){btn.setAttribute("aria-label",dark?"Ativar modo claro":"Ativar modo escuro");btn.title=dark?"Ativar modo claro":"Ativar modo escuro";}
+}
+function toggleTheme(){
+  const next=document.body.classList.contains("dark-theme")?"light":"dark";
+  localStorage.setItem(THEME_KEY,next);
+  applyTheme(next);
+}
+applyTheme(localStorage.getItem(THEME_KEY)||"light");
+
 function ensureRawStock(){if(!db.rawStock)db.rawStock={purchased:0,activatedUnused:0,movements:[]};if(!Number.isFinite(Number(db.rawStock.purchased)))db.rawStock.purchased=0;if(!Number.isFinite(Number(db.rawStock.activatedUnused)))db.rawStock.activatedUnused=0;if(!Array.isArray(db.rawStock.movements))db.rawStock.movements=[]}ensureRawStock();
 let compartments=[];
 function rebuildCompartments(){
@@ -164,7 +178,7 @@ function exportBackup(){download(JSON.stringify(db,null,2),"sim-inventory-backup
 function download(data,name,type){let a=document.createElement("a"),u=URL.createObjectURL(new Blob([data],{type}));a.href=u;a.download=name;a.click();URL.revokeObjectURL(u)}
 function importBackup(e){let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{let d=JSON.parse(r.result);if(!Array.isArray(d.chips)||!Array.isArray(d.moves))throw Error();if(!confirm("Importar backup substituirá os dados atuais deste navegador. Continuar?"))return;db=d;save();render();showToast("Backup importado.")}catch{showToast("Arquivo de backup inválido.")}};r.readAsText(f);e.target.value=""}
 document.querySelectorAll(".nav-item").forEach(b=>b.addEventListener("click",()=>setPage(b.dataset.page)));
-$("menuBtn").addEventListener("click",()=>$("sidebar").classList.toggle("open"));$("closeModal").onclick=closeModal;$("cancelModal").onclick=closeModal;$("modalBackdrop").addEventListener("click",e=>{if(e.target===$("modalBackdrop"))closeModal()});
+$("menuBtn").addEventListener("click",()=>$("sidebar").classList.toggle("open"));$("themeToggle").addEventListener("click",toggleTheme);$("closeModal").onclick=closeModal;$("cancelModal").onclick=closeModal;$("modalBackdrop").addEventListener("click",e=>{if(e.target===$("modalBackdrop"))closeModal()});
 $("boxSelect").addEventListener("change",()=>{const boxId=Number($("boxSelect").value);Array.from($("compSelect").options).forEach(o=>{if(o.value)o.hidden=boxId?Number(o.dataset.box)!==boxId:false});if($("compSelect").selectedOptions[0]?.hidden)$("compSelect").value="";});
 $("compSelect").addEventListener("change",()=>{if($("compSelect").value){$("stock").value="utilizado";const comp=compartments.find(c=>c.id===Number($("compSelect").value));if(comp)$("boxSelect").value=String(comp.boxId)}});
 $("today").textContent=new Date().toLocaleDateString("pt-BR",{weekday:"short",day:"2-digit",month:"short",year:"numeric"});
