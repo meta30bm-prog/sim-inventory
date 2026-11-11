@@ -3,7 +3,7 @@ const $=id=>document.getElementById(id);
 const weekdays=["SEG","TER","QUA","QUI","SEX","SAB","DOM"];
 const shifts=["Manhã","Tarde","Noite","Suporte"];
 let db=load(),page="dashboard",selectedComp=4,selectedPosition=1,searchTerm="",cloudReady=false;
-if(!db.rawStock)db.rawStock={purchased:0,activatedUnused:0,movements:[]};if(!Array.isArray(db.rawStock.movements))db.rawStock.movements=[];
+function ensureRawStock(){if(!db.rawStock)db.rawStock={purchased:0,activatedUnused:0,movements:[]};if(!Number.isFinite(Number(db.rawStock.purchased)))db.rawStock.purchased=0;if(!Number.isFinite(Number(db.rawStock.activatedUnused)))db.rawStock.activatedUnused=0;if(!Array.isArray(db.rawStock.movements))db.rawStock.movements=[]}ensureRawStock();
 let compartments=[];
 function rebuildCompartments(){
   if(!Array.isArray(db.boxes)||!db.boxes.length)db.boxes=[{id:1,name:"Caixa 01"}];
@@ -31,7 +31,7 @@ async function initializeCloud(){
     if(!response.ok)throw new Error("Banco de dados indisponível");
     const result=await response.json();
     if(result.state){
-      db=result.state;
+      db=result.state;ensureRawStock();
       localStorage.setItem(KEY,JSON.stringify(db));
     }else{
       const migration=await fetch("/api/state",{method:"PUT",headers:{"Content-Type":"application/json"},credentials:"same-origin",body:JSON.stringify(db)});
@@ -146,7 +146,7 @@ function reportsPage(){let s=stats();return `<div class="welcome"><div><h2>Relat
 function render(){let titles={dashboard:"Visão geral",inventory:"Estoque de matéria-prima",chips:"Todos os chips",boxes:"Caixas e posições",search:"Localizar chip",moves:"Movimentações",reports:"Relatórios"};header(titles[page]);$("content").innerHTML=({dashboard,inventory:inventoryPage,chips:chipsPage,boxes:boxesPage,search:searchPage,moves:movesPage,reports:reportsPage})[page]();if(page==="inventory")bindInventoryForms();if(page==="search"&&searchTerm){$("globalSearch").value=searchTerm;runSearch()}}
 function refreshTable(){let q=searchTerm.toLowerCase().replace(/\s/g,""),f=$("stockFilter").value,rows=db.chips.filter(c=>(!f||c.stock===f)&&(!q||[c.phone,c.owner,c.iccid,c.operator].some(v=>String(v||"").toLowerCase().replace(/\s/g,"").includes(q)))).reverse();$("chipsTable").innerHTML=chipTable(rows);$("chipCount").textContent=rows.length+" chips"}
 function populateLocations(){let b=$("boxSelect"),c=$("compSelect"),p=$("positionSelect");b.innerHTML='<option value="">Sem caixa</option>'+db.boxes.map(x=>`<option value="${x.id}">${esc(x.name)}</option>`).join("");c.innerHTML='<option value="">Sem compartimento</option>'+compartments.map(x=>`<option value="${x.id}" data-box="${x.boxId}">${esc(boxName(x.boxId))} · ${esc(x.label)}</option>`).join("");p.innerHTML='<option value="">Não definida</option>'+Array.from({length:40},(_,i)=>`<option value="${i+1}">${String(i+1).padStart(2,"0")}</option>`).join("")}
-function openModal(id=null,compId=null,pos=null){$("chipForm").reset();$("chipId").value="";$("formError").textContent="";populateLocations();$("modalTitle").textContent=id?"Editar chip":"Adicionar chip";if(id){let c=db.chips.find(x=>x.id===id);if(!c)return;$("chipId").value=c.id;$("phone").value=c.phone;$("operator").value=c.operator||"";$("owner").value=c.owner||"";$("iccid").value=c.iccid||"";$("stock").value=c.stock;$("status").value=c.status;$("boxSelect").value=c.boxId||"";$("compSelect").value=c.compartmentId||"";$("positionSelect").value=c.position||"";$("notes").value=c.notes||""}else if(compId){$("stock").value="utilizado";const selected=compartments.find(c=>c.id===Number(compId));$("boxSelect").value=selected?String(selected.boxId):"1";$("compSelect").value=compId;$("positionSelect").value=pos||""}$("modalBackdrop").hidden=false;$("phone").focus()}
+function openModal(id=null,compId=null,pos=null){$("chipForm").reset();$("chipId").value="";$("formError").textContent="";populateLocations();$("modalTitle").textContent=id?"Editar chip":"Adicionar chip";if(id){let c=db.chips.find(x=>x.id===id);if(!c)return;$("chipId").value=c.id;$("phone").value=c.phone;$("operator").value=c.operator||"";$("owner").value=c.owner||"";$("iccid").value=c.iccid||"";$("stock").value="utilizado";$("status").value=c.status;$("boxSelect").value=c.boxId||"";$("compSelect").value=c.compartmentId||"";$("positionSelect").value=c.position||"";$("notes").value=c.notes||""}else if(compId){$("stock").value="utilizado";const selected=compartments.find(c=>c.id===Number(compId));$("boxSelect").value=selected?String(selected.boxId):"1";$("compSelect").value=compId;$("positionSelect").value=pos||""}$("modalBackdrop").hidden=false;$("phone").focus()}
 function openModalForComp(id,pos){openModal(null,id,pos)}
 function editChip(id){openModal(id)}
 function closeModal(){$("modalBackdrop").hidden=true}
