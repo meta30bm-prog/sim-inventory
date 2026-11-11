@@ -12,3 +12,5 @@
 .auth-card input{display:block;width:100%;margin-top:7px;border:1px solid #dce4ee;border-radius:8px;padding:12px;font:14px "DM Sans"}
 .auth-card button{width:100%;margin-top:14px}
 .auth-error{font-size:11px;color:#bd413b;text-align:left;margin-top:9px}
+
+.dashboard-kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px;margin-bottom:18px}.dashboard-kpis .stat{border-color:#dfe7f2}.stock-alert{display:flex;align-items:flex-start;gap:14px;padding:17px 19px;margin:0 0 18px;background:#fff1f0;border:2px solid #d92d20;border-left-width:7px;border-radius:12px;color:#8f1d18;box-shadow:0 4px 14px #b423181a}.stock-alert-icon{flex:0 0 34px;height:34px;border-radius:50%;display:grid;place-items:center;background:#d92d20;color:#fff;font:800 22px Manrope}.stock-alert strong{font:800 13px Manrope;letter-spacing:.3px}.stock-alert ul{margin:7px 0 5px;padding-left:18px;font-size:13px;font-weight:700}.stock-alert small{font-size:10px;color:#a33b34}@media(max-width:700px){.dashboard-kpis{grid-template-columns:1fr;gap:9px}.stock-alert{padding:14px;gap:10px}.stock-alert strong{font-size:11px}}
