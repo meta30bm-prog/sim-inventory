@@ -11,6 +11,9 @@ import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.net.URL
 import java.util.UUID
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import java.util.concurrent.Executors
 
 class MainActivity : Activity() {
@@ -107,6 +110,8 @@ class MainActivity : Activity() {
         if (count == 0) list.addView(TextView(this).apply { text = "Nenhum chip encontrado."; setPadding(8, 18, 8, 18); textSize = 15f })
     }
 
+    private fun timestamp() = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US).format(Date())
+
     private fun stockName(value: String) = when(value) { "nao_ativado" -> "Não ativado"; "ativado" -> "Ativado"; "utilizado" -> "Utilizado"; else -> value }
     private fun statusName(value: String) = when(value) { "disponivel" -> "Disponível"; "em_uso" -> "Em uso"; "bloqueado" -> "Bloqueado"; "retirado" -> "Retirado"; else -> value }
 
@@ -139,9 +144,12 @@ class MainActivity : Activity() {
                         .put("iccid", iccid.text.toString().trim()).put("stock", stockCode)
                         .put("status", "disponivel").put("boxId", JSONObject.NULL).put("compartmentId", JSONObject.NULL)
                         .put("position", JSONObject.NULL).put("notes", notes.text.toString().trim())
-                        .put("createdAt", java.time.Instant.now().toString()).put("updatedAt", java.time.Instant.now().toString())
+                        .put("createdAt", timestamp()).put("updatedAt", java.time.Instant.now().toString())
                     latestChips.put(chip)
                     latest.put("chips", latestChips)
+                    val moves = latest.optJSONArray("moves") ?: JSONArray()
+                    moves.put(JSONObject().put("id", UUID.randomUUID().toString()).put("phone", number).put("action", "Cadastro").put("from", "—").put("to", stockName(stockCode)).put("date", timestamp()))
+                    latest.put("moves", moves)
                     if (!latest.has("moves")) latest.put("moves", JSONArray())
                     if (!latest.has("boxes")) latest.put("boxes", JSONArray().put(JSONObject().put("id", 1).put("name", "Caixa 01")))
                     request("PUT", latest)
