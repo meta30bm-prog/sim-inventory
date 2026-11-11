@@ -70,7 +70,7 @@ function importBulkText(){const value=$("bulkText").value.trim();if(!value){show
 function importBulkFile(e){const f=e.target.files[0];if(!f)return;const reader=new FileReader();reader.onload=()=>processBulk(String(reader.result||""));reader.onerror=()=>showToast("Não foi possível ler o CSV.");reader.readAsText(f,"UTF-8");e.target.value=""}
 function processBulk(raw){
   const rows=parseCSV(raw);if(!rows.length){showToast("Arquivo vazio.");return}
-  const aliases={phone:["numero","numerotelefonico","telefone","celular","phone","msisdn"],operator:["operadora","operator"],owner:["responsavel","owner"],iccid:["iccid","simserial"],stock:["estoque","stock"],status:["situacao","status"],notes:["observacoes","observacao","notes"]};
+  const aliases={phone:["numero","numerotelefonico","telefone","celular","phone","msisdn"],operator:["operadora","operator"],owner:["responsavel","owner"],iccid:["iccid","simserial"],stock:["estoque","stock"],status:["situacao","status"],box:["caixa","box"],compartment:["compartimento","compartment","localizacao","local"],position:["posicao","position"],notes:["observacoes","observacao","notes"]};
   const first=rows[0].map(normalizeHeader),hasHeader=Object.values(aliases).flat().some(a=>first.includes(a));
   const map={};if(hasHeader)for(const [key,names] of Object.entries(aliases)){const idx=first.findIndex(h=>names.includes(h));if(idx>=0)map[key]=idx}
   const data=hasHeader?rows.slice(1):rows,existing=new Set(db.chips.map(c=>String(c.phone||"").replace(/\D/g,""))),seen=new Set(),added=[],errors=[];
@@ -82,7 +82,15 @@ function processBulk(raw){
     const stockRaw=normalizeHeader(get("stock")),statusRaw=normalizeHeader(get("status"));
     const stock=({"naoativado":"nao_ativado","naoativados":"nao_ativado","ativado":"ativado","ativados":"ativado","utilizado":"utilizado","utilizados":"utilizado"})[stockRaw]||"nao_ativado";
     const status=({"disponivel":"disponivel","emuso":"em_uso","bloqueado":"bloqueado","retirado":"retirado"})[statusRaw]||"disponivel";
-    const chip={id:crypto.randomUUID(),phone,operator:get("operator").trim(),owner:get("owner").trim(),iccid:get("iccid").trim(),stock,status,boxId:null,compartmentId:null,position:null,notes:get("notes").trim(),createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()};
+    const boxRaw=normalizeHeader(get("box")),compRaw=normalizeHeader(get("compartment")),posRaw=String(get("position")||"").trim();
+    let boxId=null,compartmentId=null,position=null;
+    if(boxRaw||compRaw||posRaw){
+      if(stock!=="utilizado"){errors.push("Linha "+(i+(hasHeader?2:1))+": informe estoque utilizado para atribuir localização.");continue}
+      if(boxRaw&&boxRaw!=="caixa01"&&boxRaw!=="1"){errors.push("Linha "+(i+(hasHeader?2:1))+": caixa não reconhecida ("+get("box")+").");continue}
+      if(compRaw){const found=compartments.find(x=>normalizeHeader(x.label)===compRaw);if(!found){errors.push("Linha "+(i+(hasHeader?2:1))+": compartimento inválido ("+get("compartment")+").");continue}compartmentId=found.id;boxId=1;}
+      if(posRaw){position=Number(posRaw);if(!Number.isInteger(position)||position<1||position>40){errors.push("Linha "+(i+(hasHeader?2:1))+": posição deve ser de 01 a 40.");continue}if(!compartmentId){errors.push("Linha "+(i+(hasHeader?2:1))+": informe o compartimento junto com a posição.");continue}if(db.chips.some(x=>Number(x.compartmentId)===compartmentId&&Number(x.position)===position&&x.stock==="utilizado")||added.some(x=>Number(x.compartmentId)===compartmentId&&Number(x.position)===position)){errors.push("Linha "+(i+(hasHeader?2:1))+": posição já ocupada.");continue}}
+    }
+    const chip={id:crypto.randomUUID(),phone,operator:get("operator").trim(),owner:get("owner").trim(),iccid:get("iccid").trim(),stock,status,boxId,compartmentId,position,notes:get("notes").trim(),createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()};
     added.push(chip);seen.add(phone);
   }
   if(!added.length){$("bulkResult").textContent="Nenhum chip novo foi importado. "+errors.slice(0,5).join(" · ");return}
