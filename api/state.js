@@ -1,7 +1,6 @@
-import { authenticated, getState, putState, json } from "../lib/server.js";
+import { getState, putState, json } from "../lib/server.js";
 
 export default async function handler(req, res) {
-  if (!authenticated(req)) return json(res, 401, { error: "Não autenticado." });
   try {
     if (req.method === "GET") return json(res, 200, { state: await getState() });
     if (req.method === "PUT") {
