@@ -31,7 +31,6 @@ async function initializeCloud(){
       await fetch("/api/state",{method:"PUT",headers:{"Content-Type":"application/json"},credentials:"same-origin",body:JSON.stringify(db)}).then(r=>{if(!r.ok)throw new Error("Falha na migração")});
     }
     cloudReady=true;$("authBackdrop").hidden=true;setCloudStatus("Banco de dados conectado");render();
-initializeCloud();
   }catch(error){setCloudStatus("Banco de dados indisponível");showToast(error.message||"Falha ao conectar")}
 }
 $("loginForm").addEventListener("submit",async e=>{
