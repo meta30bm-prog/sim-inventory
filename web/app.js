@@ -17,7 +17,7 @@ function save(){
 }
 function setCloudStatus(message){
   const el=document.querySelector(".local-status");
-  if(el){el.querySelector("b").textContent=message;el.querySelector("small").textContent="Armazenamento central seguro";}
+  if(el){el.querySelector("b").textContent=message;el.querySelector("small").textContent="Acesso público, sem senha";}
 }
 async function initializeCloud(){
   try{
