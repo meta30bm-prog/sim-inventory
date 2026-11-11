@@ -31,7 +31,7 @@
 <div class="modal-backdrop" id="modalBackdrop" hidden><section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><div class="modal-head"><div><div class="eyebrow">CADASTRO</div><h2 id="modalTitle">Adicionar chip</h2></div><button class="icon-btn" id="closeModal" aria-label="Fechar">×</button></div><form id="chipForm"><input type="hidden" id="chipId"><div class="form-grid">
 <label>Número telefônico *<input id="phone" required placeholder="11987654321" inputmode="tel"></label>
 <label>Operadora<select id="operator"><option value="">Selecionar</option><option>Vivo</option><option>Claro</option><option>TIM</option><option>Algar</option><option>Outra</option></select></label>
-<label>Responsável<input id="owner" placeholder="Nome do responsável"></label>
+<label>Responsável *<input id="owner" required placeholder="Nome do responsável"></label>
 <label>ICCID (opcional)<input id="iccid" placeholder="Identificador do SIM"></label>
 <input type="hidden" id="stock" value="utilizado">
 <label>Situação<select id="status"><option value="disponivel">Disponível</option><option value="em_uso">Em uso</option><option value="bloqueado">Bloqueado</option><option value="retirado">Retirado</option></select></label>
