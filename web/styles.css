@@ -63,3 +63,6 @@ body.dark-theme .stock-bars .bar-row{color:#b7c5d8}
 .chip-table-number{display:flex;flex-direction:column;gap:4px;min-width:105px}
 .chip-table-iccid{display:block;font-size:11px;line-height:1.35;color:#7f91aa;overflow-wrap:anywhere}
 body.dark-theme .chip-table-iccid{color:#a9bad2}
+
+/* Mantém o número do chip com a mesma cor e contraste do restante da linha */
+.chip-table-number strong{color:inherit;opacity:1}
