@@ -59,3 +59,7 @@ body.dark-theme .local-status{background:#1b2d47}
 body.dark-theme .dashboard-kpis .stat{border-color:#30435f}
 body.dark-theme .stock-bars .bar-row{color:#b7c5d8}
 @media(max-width:700px){.theme-toggle{width:58px;height:33px}}
+
+.chip-table-number{display:flex;flex-direction:column;gap:4px;min-width:105px}
+.chip-table-iccid{display:block;font-size:11px;line-height:1.35;color:#7f91aa;overflow-wrap:anywhere}
+body.dark-theme .chip-table-iccid{color:#a9bad2}
