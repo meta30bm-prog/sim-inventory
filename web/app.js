@@ -195,7 +195,8 @@ function runSearch(){
   const input=$("globalSearch");if(input)searchTerm=input.value;
   const q=String(searchTerm||"").toLowerCase().replace(/\s/g,"");
   const digits=v=>String(v||"").replace(/\D/g,"");
-  const rows=db.chips.filter(c=>{
+  const hasCriteria=!!q||Object.values(searchFilters).some(Boolean);
+  const rows=hasCriteria?db.chips.filter(c=>{
     const mainMatch=!q||(searchMode==="phone"?digits(c.phone).includes(digits(q)):String(c.iccid||"").toLowerCase().replace(/\s/g,"").includes(q));
     const phoneMatch=!searchFilters.phone||digits(c.phone).includes(digits(searchFilters.phone));
     const iccidMatch=!searchFilters.iccid||String(c.iccid||"").toLowerCase().includes(searchFilters.iccid.toLowerCase().trim());
@@ -205,7 +206,7 @@ function runSearch(){
     const compartment=compartments.find(x=>Number(x.id)===Number(c.compartmentId));
     const sectorMatch=!searchFilters.sector||(compartment&&compartment.shift===searchFilters.sector);
     return mainMatch&&phoneMatch&&iccidMatch&&operatorMatch&&statusMatch&&boxMatch&&sectorMatch;
-  });
+  }):[];
   $("searchResults").innerHTML=rows.length?rows.map(c=>\`<div class="result-card"><span class="pill green">Registro encontrado</span><div class="result-number">\${esc(fmtPhone(c.phone))}</div><div class="panel-sub">\${esc(c.operator||"Operadora não informada")} · \${esc(c.owner||"Sem responsável")}</div><div class="panel-sub" style="margin-top:6px"><b>Código do chip (ICCID):</b> \${esc(c.iccid||"Não informado")}</div><div class="result-location"><b>Localização</b><p>\${c.compartmentId?esc(boxName(c.boxId||1))+" → "+esc(chipComp(c))+(c.position?" → Posição "+String(c.position).padStart(2,"0"):""):"Sem localização física cadastrada"}</p><p>\${stockLabel(c.stock)} · \${statusLabel(c.status)}</p></div><button class="btn secondary" style="margin-top:12px" onclick="editChip('\${c.id}')">Editar cadastro</button></div>\`).join(""):q||Object.values(searchFilters).some(Boolean)?'<div class="empty">Nenhum chip encontrado com os critérios informados.</div>':'Digite para pesquisar no cadastro.';
 }
 function movesPage(){return `<div class="welcome"><div><h2>Movimentações</h2><p>Histórico de alterações de estoque e localização.</p></div></div><section class="table-panel"><div class="table-head"><h3 class="table-title">Histórico de movimentações</h3><span class="muted">${db.moves.length} registros</span></div>${db.moves.length?`<div class="table-wrap"><table><thead><tr><th>Data</th><th>Número</th><th>Operação</th><th>Origem</th><th>Destino</th></tr></thead><tbody>${db.moves.slice().reverse().map(m=>`<tr><td>${new Date(m.date).toLocaleString("pt-BR")}</td><td><b>${esc(fmtPhone(m.phone))}</b></td><td>${esc(m.action)}</td><td>${esc(m.from||"—")}</td><td>${esc(m.to||"—")}</td></tr>`).join("")}</tbody></table></div>`:'<div class="empty">As movimentações aparecerão aqui quando os chips forem cadastrados ou transferidos.</div>'}</section>`}
