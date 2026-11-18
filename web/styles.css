@@ -66,3 +66,31 @@ body.dark-theme .chip-table-iccid{color:#a9bad2}
 
 /* Mantém o número do chip com a mesma cor e contraste do restante da linha */
 .chip-table-number strong{color:inherit;opacity:1}
+
+/* Pesquisa avançada de chips */
+.search-panel{position:relative;overflow:visible}
+.search-mode-row{display:flex;align-items:center;gap:10px;margin-top:14px}
+.search-mode{border:0;background:transparent;color:#536177;padding:9px 13px;border-radius:8px;font:700 12px "DM Sans";cursor:pointer}
+.search-mode.active{background:#eaf1ff;color:#245fca}
+.filter-trigger{display:inline-flex;align-items:center;gap:8px;border:1px solid #2868d7;background:#2868d7;color:#fff;padding:10px 16px;border-radius:9px;font:700 12px "DM Sans";cursor:pointer;box-shadow:0 4px 12px #2868d729}
+.filter-trigger span{font-size:16px;line-height:10px}
+.filter-trigger.active{background:#1e55b5}
+.search-filter-panel{margin-top:12px;padding:18px;border:1px solid #8db4f5;border-radius:12px;background:#fff;box-shadow:0 12px 30px #1c315018}
+.search-filter-panel[hidden]{display:none}
+.filter-panel-head,.filter-panel-head>div{display:flex;align-items:center;gap:10px}
+.filter-panel-head{justify-content:space-between;margin-bottom:16px;color:#1c2b43}
+.filter-panel-head strong{font:800 15px Manrope}
+.filter-symbol{font-size:19px;color:#2868d7}
+.filter-close{border:0;background:transparent;color:#718096;font-size:24px;cursor:pointer;line-height:1}
+.search-filter-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 16px}
+.search-filter-grid label{display:flex;flex-direction:column;gap:6px;color:#536177;font-size:11px;font-weight:700}
+.search-filter-grid input,.search-filter-grid select{width:100%;min-width:0;padding:10px 12px;border:1px solid #dce4ef;border-radius:8px;background:#fff;color:#26364c;font:12px "DM Sans";outline-color:#8db4f5}
+.filter-panel-actions{display:flex;justify-content:space-between;gap:10px;margin-top:17px}
+.search-results{display:grid;gap:14px}
+body.dark-theme .search-mode{color:#b8c7dc}
+body.dark-theme .search-mode.active{background:#203b65;color:#dceaff}
+body.dark-theme .search-filter-panel{background:#142239;border-color:#2868d7;box-shadow:0 12px 32px #0004}
+body.dark-theme .filter-panel-head{color:#e6edf8}
+body.dark-theme .search-filter-grid label{color:#b9c6d8}
+body.dark-theme .search-filter-grid input,body.dark-theme .search-filter-grid select{background:#101c30;border-color:#344762;color:#e6edf8}
+@media(max-width:600px){.search-mode-row{gap:4px;flex-wrap:wrap}.search-mode{padding:9px 10px}.filter-trigger{padding:10px 12px}.search-filter-grid{grid-template-columns:1fr}.filter-panel-actions{flex-direction:column-reverse}.filter-panel-actions .btn{width:100%}}
