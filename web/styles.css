@@ -69,7 +69,7 @@ body.dark-theme .chip-table-iccid{color:#a9bad2}
 
 /* Pesquisa avançada de chips */
 .search-panel{position:relative;overflow:visible}
-.search-mode-row{display:flex;align-items:center;gap:10px;margin-top:14px}
+.search-mode-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:14px}.search-mode-group{display:flex;align-items:center;gap:10px;min-width:0}
 .search-mode{border:0;background:transparent;color:#536177;padding:9px 13px;border-radius:8px;font:700 12px "DM Sans";cursor:pointer}
 .search-mode.active{background:#eaf1ff;color:#245fca}
 .filter-trigger{display:inline-flex;align-items:center;gap:8px;border:1px solid #2868d7;background:#2868d7;color:#fff;padding:10px 16px;border-radius:9px;font:700 12px "DM Sans";cursor:pointer;box-shadow:0 4px 12px #2868d729}
