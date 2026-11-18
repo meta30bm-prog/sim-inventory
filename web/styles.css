@@ -137,3 +137,14 @@ body.dark-theme .bulk-move-chip-item{background:#16263d;border-color:#3b4c65;col
 body.dark-theme .bulk-move-chip-item:has(input:checked){background:#203b65;border-color:#6da2f3}
 body.dark-theme .bulk-transfer-footer{background:#142239;border-color:#344762}
 @media(max-width:650px){.bulk-transfer-panel{padding:15px!important}.bulk-transfer-fields{grid-template-columns:1fr}.bulk-transfer-fields label:last-child{grid-column:auto}.bulk-transfer-step{margin-left:0;width:100%;text-align:center}.bulk-move-chip-grid{grid-template-columns:1fr}.bulk-transfer-footer{position:static}.bulk-transfer-footer .btn{width:100%}}
+
+
+/* Menu flutuante de movimentação em massa */
+.bulk-transfer-modal{display:none;position:fixed;inset:0;z-index:10000;align-items:center;justify-content:center;padding:22px;background:rgba(5,13,27,.68);backdrop-filter:blur(5px)}
+.bulk-transfer-modal.is-open{display:flex}
+.bulk-transfer-modal .bulk-transfer-panel{width:min(940px,100%);max-height:min(88vh,900px);overflow:auto;margin:0!important;padding:22px!important;border:1px solid var(--line,#cbd5e1);border-radius:18px;background:var(--surface,#fff);box-shadow:0 24px 90px #0006;animation:bulkTransferEnter .18s ease-out}
+.bulk-transfer-close{display:grid;place-items:center;width:36px;height:36px;margin-left:auto;border:1px solid var(--line,#cbd5e1);border-radius:10px;background:var(--surface-soft,#f8fafc);color:var(--text,#1e293b);font-size:25px;line-height:1;cursor:pointer}
+.bulk-transfer-modal .bulk-transfer-footer{position:sticky;bottom:-22px;margin:18px -22px -22px;padding:14px 22px;border-radius:0 0 18px 18px}
+body.bulk-transfer-open{overflow:hidden}
+@keyframes bulkTransferEnter{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}
+@media(max-width:650px){.bulk-transfer-modal{padding:8px;align-items:flex-end}.bulk-transfer-modal .bulk-transfer-panel{max-height:94vh;padding:15px!important;border-radius:17px 17px 10px 10px}.bulk-transfer-modal .bulk-transfer-footer{bottom:-15px;margin:18px -15px -15px;padding:12px 15px}.bulk-transfer-modal .bulk-transfer-footer .btn{width:100%}}
