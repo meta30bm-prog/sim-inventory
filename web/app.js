@@ -167,9 +167,11 @@ function searchPage(){
   <section class="panel search-panel">
     <div class="searchbox"><input id="globalSearch" placeholder="${searchMode==="phone"?"Buscar pelo número do telefone...":"Buscar pelo código do chip (ICCID)..."}" value="${esc(searchTerm)}" oninput="runSearch()"></div>
     <div class="search-mode-row">
-      <button type="button" class="search-mode ${searchMode==="phone"?"active":""}" onclick="setSearchMode('phone')">Número</button>
+      <div class="search-mode-group">
+        <button type="button" class="search-mode ${searchMode==="phone"?"active":""}" onclick="setSearchMode('phone')">Número</button>
+        <button type="button" class="search-mode ${searchMode==="iccid"?"active":""}" onclick="setSearchMode('iccid')">Código</button>
+      </div>
       <button type="button" class="filter-trigger ${searchFiltersOpen?"active":""}" onclick="toggleSearchFilters()" aria-expanded="${searchFiltersOpen}">⚑ &nbsp;Filtros de Pesquisa <span>⌄</span></button>
-      <button type="button" class="search-mode ${searchMode==="iccid"?"active":""}" onclick="setSearchMode('iccid')">Código</button>
     </div>
     <div id="searchFilterPanel" class="search-filter-panel" ${searchFiltersOpen?"":"hidden"}>
       <div class="filter-panel-head"><div><span class="filter-symbol">⚑</span><strong>Filtros de Pesquisa</strong></div><button type="button" class="filter-close" onclick="toggleSearchFilters(false)" aria-label="Fechar filtros">×</button></div>
